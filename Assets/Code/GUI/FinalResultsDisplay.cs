@@ -5,7 +5,7 @@ using UnityEngine;
 using GameEngine;
 using Database.Score;
 
-namespace GUI.GameEngine
+namespace GameGUI.GameEngine
 {
     public class FinalResultsDisplay : MonoBehaviour
     {

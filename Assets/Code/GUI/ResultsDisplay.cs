@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 using Database.Score;
 
-namespace GUI
+namespace GameGUI
 {
     public class ResultsDisplay : MonoBehaviour
     {

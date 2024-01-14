@@ -22,14 +22,9 @@ namespace GameEngine
         [SerializeField]
         private Player.PlayerController[] allPlayers;
 
-        void Start()
+        private void Start()
         {
             timer.OnTimeRunOut += OnTimeRunOut;
-        }
-
-        void Update()
-        {
-
         }
 
         private void OnTimeRunOut()

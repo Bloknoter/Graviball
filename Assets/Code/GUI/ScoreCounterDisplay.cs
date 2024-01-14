@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 using GameEngine;
 
-namespace GUI.GameEngine
+namespace GameGUI.GameEngine
 {
     public class ScoreCounterDisplay : MonoBehaviour
     {
