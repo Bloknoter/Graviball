@@ -1,7 +1,7 @@
 var Plugin = {
 
     GetValue: function(key){
-		var returnStr = onUnityRequestValue(UTF8ToString(str));
+		var returnStr = onUnityRequestValue(UTF8ToString(key));
 		var bufferSize = lengthBytesUTF8(returnStr) + 1;
 		var buffer = _malloc(bufferSize);
 		stringToUTF8(returnStr, buffer, bufferSize);
