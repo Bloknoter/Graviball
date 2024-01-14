@@ -20,6 +20,8 @@ namespace GameGUI
         private void Awake()
         {
             m_session.OnConnected += OnConnected;
+            if(m_session.Connected)
+                OnConnected();
         }
 
         private void OnConnected()

@@ -16,17 +16,11 @@ namespace SaveLoad
         public delegate void ScoreSendListener(bool succeed);
         public event ScoreSendListener OnScoreSendFinished;
 
-        public const string PLAYER_NAME_KEY_FORM = "player_name";
-        public const string LEVEL_KEY_FORM = "level";
-        public const string PLAYER_SCORE_KEY_FORM = "player_score";
-        public const string ENEMY_SCORE_KEY_FORM = "enemy_score";
+        public const string NEW_HIGHSCORE = "new_highscore";
 
         public delegate void OnNewHightScoreDelegate();
 
         public event OnNewHightScoreDelegate OnNewHighScore;
-
-        [SerializeField]
-        private string m_url;
 
         [SerializeField]
         private Player.PlayerSessionData m_sessionData;
@@ -63,7 +57,7 @@ namespace SaveLoad
                 levelData.isPlayed = true;
 
                 if (m_sessionData != null && m_sessionData.Connected)
-                    StartCoroutine(SendNewHighscoreToServer(levelData));
+                    SendNewHighscoreToWebPage(levelData);
                 else
                     OnScoreSendFinished?.Invoke(false);
 
@@ -71,29 +65,27 @@ namespace SaveLoad
             }
         }
 
-        private IEnumerator SendNewHighscoreToServer(Database.Score.LevelData levelData)
+        private void SendNewHighscoreToWebPage(Database.Score.LevelData levelData)
         {
-            WWWForm form = new WWWForm();
-            form.AddField(PLAYER_NAME_KEY_FORM, m_sessionData.Name);
-            form.AddField(LEVEL_KEY_FORM, levelsData.ChoosedLevel);
-            form.AddField(PLAYER_SCORE_KEY_FORM, levelData.GreenTeamScore);
-            form.AddField(ENEMY_SCORE_KEY_FORM, levelData.RedTeamScore);
+            var data = new JSONScoreData(levelsData.ChoosedLevel, levelData.GreenTeamScore, levelData.RedTeamScore);
 
-            WWW connection = new WWW(m_url, form);
+            var convertedData = JsonUtility.ToJson(data);
 
-            yield return connection;
+            WebCommunication.WebBridge.SendValue(NEW_HIGHSCORE, convertedData);
+        }
 
-            if(connection.error != null)
+        private class JSONScoreData
+        {
+            public int level;
+            public int greenScore;
+            public int redScore;
+
+            public JSONScoreData(int level, int greensScore, int redScore)
             {
-                OnScoreSendFinished?.Invoke(false);
-                yield break;
+                this.level = level;
+                this.greenScore = greensScore;
+                this.redScore = redScore;
             }
-            else if(connection.isDone) 
-            {
-                OnScoreSendFinished?.Invoke(true);
-            }
-
-            connection.Dispose();
         }
     }
 }

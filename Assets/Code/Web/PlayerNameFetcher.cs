@@ -18,16 +18,14 @@ namespace WebCommunication
 
         private void Awake()
         {
-            m_socket.OnTextWithKeyReceived.AddListener(OnTextWithKeyReceived);
+            GetPlayerName();
         }
 
-        private void OnTextWithKeyReceived(TextWithKey data)
+        private void GetPlayerName()
         {
-            if (data.key != PLAYERNAME_KEY)
-                return;
-
-            m_sessionData.Name = data.text;
+            m_sessionData.Name = WebBridge.GetValue(PLAYERNAME_KEY);
             m_sessionData.SetAsConnected();
+            WebBridge.ShowMessageBox("If you see this, that means plugin is working!");
         }
     }
 }
