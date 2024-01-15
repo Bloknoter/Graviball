@@ -15,11 +15,22 @@ namespace GameGUI
         [SerializeField]
         private ScoreData scoreData;
 
-        void Start()
+        private void OnEnable()
         {
-            for(int i = 0; i < ResultsT.Length;i++)
+            scoreData.OnScoreDataChanged += OnScoreDataChanged;
+            UpdateResults();
+        }
+
+        private void OnScoreDataChanged()
+        {
+            UpdateResults();
+        }
+
+        private void UpdateResults()
+        {
+            for (int i = 0; i < ResultsT.Length; i++)
             {
-                LevelData levelData = scoreData.GetLevelData(i);
+                LevelData levelData = scoreData.LevelDataAt(i);
                 if (levelData.isPlayed)
                     ResultsT[i].text = $"{levelData.GreenTeamScore}-{levelData.RedTeamScore}";
                 else
@@ -27,9 +38,9 @@ namespace GameGUI
             }
         }
 
-        void Update()
+        private void OnDisable()
         {
-
+            scoreData.OnScoreDataChanged -= OnScoreDataChanged;
         }
     }
 }

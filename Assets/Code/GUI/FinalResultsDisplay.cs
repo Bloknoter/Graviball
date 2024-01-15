@@ -21,11 +21,6 @@ namespace GameGUI.GameEngine
             scoreSave.OnNewHighScore += OnNewHighScore;
         }
 
-        void Update()
-        {
-
-        }
-
         private void OnNewHighScore()
         {
             HighScore.SetActive(true);

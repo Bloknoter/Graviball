@@ -8,10 +8,15 @@ namespace Database.Score
     [CreateAssetMenu(fileName = "ScoreData", menuName = "Score data", order = 1)]
     public class ScoreData : ScriptableObject
     {
+        public delegate void ScoreDataListener();
+        public event ScoreDataListener OnScoreDataChanged;
+
         [SerializeField]
         private LevelData[] levelDatas;
 
-        public LevelData GetLevelData(int index)
+        public int LevelsCount => levelDatas.Length;
+
+        public LevelData LevelDataAt(int index)
         {
             if(index >= 0 && index < levelDatas.Length)
             {
@@ -21,6 +26,11 @@ namespace Database.Score
             {
                 throw new System.Exception($"You are trying to GetLevelData with index {index}, but the whole amount of datas is {levelDatas.Length}");
             }
+        }
+
+        public void CallScoreDataChangedEvent()
+        {
+            OnScoreDataChanged?.Invoke();
         }
     }
 

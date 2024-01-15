@@ -1,91 +1,81 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 
 using Database.Score;
-using Database.AI;
+using WebCommunication;
 
 
 namespace SaveLoad
 {
     public class ScoreLoad : MonoBehaviour
     {
-        public delegate void ScoreLoadListener(bool succeed);
-        public event ScoreLoadListener OnScoreLoaded;
+        public const string PLAYER_SCORE_DATA = "score_data";
 
-        public const string PLAYER_NAME_KEY_FORM = "player_name";
-
-        [SerializeField]
-        private string m_url;
-
-        [SerializeField]
-        private WebCommunication.GameSocket m_gameSocket;
-
-        [SerializeField]
-        private Player.PlayerSessionData m_sessionData;
+        private static bool m_fetched = false;
 
         [SerializeField]
         private ScoreData scoreData;
 
-        private void Awake()
+        private void Start()
         {
-            m_sessionData.OnConnected += OnConnected;
+            if (!m_fetched)
+            {
+                m_fetched = true;
+                FetchScore();
+            }
         }
 
-        private void OnConnected()
+        private void FetchScore()
         {
-            StartCoroutine(FetchScoreFromServer());
-        }
+            var dataAsJson = WebBridge.Instance.Request(PLAYER_SCORE_DATA);
+            FillScoreFromJson(dataAsJson);
 
-        private IEnumerator FetchScoreFromServer()
-        {
-            WWWForm form = new WWWForm();
-            form.AddField(PLAYER_NAME_KEY_FORM, m_sessionData.Name);
-
-            WWW connection = new WWW(m_url, form);
-
-            yield return connection;
-
-            if (connection.error != null)
-            {
-                OnScoreLoaded?.Invoke(false);
-                connection.Dispose();
-                yield break;
-            }
-            else if (connection.isDone)
-            {
-                FillScoreFromJson(connection.text);
-                OnScoreLoaded?.Invoke(true);
-            }
-
-            connection.Dispose();
+            scoreData.CallScoreDataChangedEvent();
         }
 
         private void FillScoreFromJson(string json)
         {
             var fetchedData = JsonUtility.FromJson<FetchedScoreData>(json);
 
-            for(int i = 0; i < fetchedData.levels.Count; ++i) 
+            for(int i = 0; i < scoreData.LevelsCount; ++i) 
             {
-                var levelData = scoreData.GetLevelData(fetchedData.levels[i].level);
-                levelData.isPlayed = true;
-                levelData.GreenTeamScore = fetchedData.levels[i].player_score;
-                levelData.RedTeamScore = fetchedData.levels[i].enemy_score;
+                var levelData = scoreData.LevelDataAt(i);
+                if (i < fetchedData.levels.Count)
+                {
+                    levelData.isPlayed = true;
+                    levelData.GreenTeamScore = fetchedData.levels[i].greenScore;
+                    levelData.RedTeamScore = fetchedData.levels[i].redScore;
+                }
+                else
+                {
+                    levelData.isPlayed = false;
+                }
             }
         }
 
+        [System.Serializable]
         private class FetchedScoreData
         {
+            [System.Serializable]
             public class LevelData
             {
-                public int level;
-                public int player_score;
-                public int enemy_score;
+                public int greenScore;
+                public int redScore;
+
+                public LevelData(int greenScore, int redScore)
+                {
+                    this.greenScore = greenScore;
+                    this.redScore = redScore;
+                }
             }
 
             public List<LevelData> levels;
+
+            public FetchedScoreData(List<LevelData> levels)
+            {
+                this.levels = levels;
+            }
         }
     }
 }

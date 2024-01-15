@@ -19,7 +19,7 @@ namespace GameGUI
 
         private void Awake()
         {
-            m_scoreSave.OnScoreSendFinished += OnScoreSaved;
+            m_scoreSave.OnScoreSaved += OnScoreSaved;
             m_savingInformationPanel.SetActive(true);
             m_controlsPanel.SetActive(false);
         }

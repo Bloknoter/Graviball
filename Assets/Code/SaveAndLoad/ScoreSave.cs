@@ -13,17 +13,13 @@ namespace SaveLoad
 {
     public class ScoreSave : MonoBehaviour
     {
-        public delegate void ScoreSendListener(bool succeed);
-        public event ScoreSendListener OnScoreSendFinished;
-
-        public const string NEW_HIGHSCORE = "new_highscore";
+        public delegate void ScoreSaveListener(bool succeed);
+        public event ScoreSaveListener OnScoreSaved;
 
         public delegate void OnNewHightScoreDelegate();
-
         public event OnNewHightScoreDelegate OnNewHighScore;
 
-        [SerializeField]
-        private Player.PlayerSessionData m_sessionData;
+        public const string NEW_HIGHSCORE = "new_highscore";
 
         [SerializeField]
         private BotLevelsData levelsData;
@@ -40,6 +36,9 @@ namespace SaveLoad
         [SerializeField]
         private MenuEngine.MenuController menuController;
 
+        private bool m_scoreSaved;
+
+        public bool ScoreSaved => m_scoreSaved;
 
         private void Start()
         {
@@ -48,18 +47,16 @@ namespace SaveLoad
 
         private void OnTimeRunOut()
         {
-            Database.Score.LevelData levelData = scoreData.GetLevelData(levelsData.ChoosedLevel);
+            Database.Score.LevelData levelData = scoreData.LevelDataAt(levelsData.ChoosedLevel);
             if (levelData.isPlayed == false || 
                 levelData.GreenTeamScore - levelData.RedTeamScore < scoreCounter.GreenTeamScore - scoreCounter.RedTeamScore)
             {
                 levelData.RedTeamScore = scoreCounter.RedTeamScore;
                 levelData.GreenTeamScore = scoreCounter.GreenTeamScore;
                 levelData.isPlayed = true;
+                scoreData.CallScoreDataChangedEvent();
 
-                if (m_sessionData != null && m_sessionData.Connected)
-                    SendNewHighscoreToWebPage(levelData);
-                else
-                    OnScoreSendFinished?.Invoke(false);
+                SendNewHighscoreToWebPage(levelData);
 
                 OnNewHighScore?.Invoke();
             }
@@ -68,10 +65,17 @@ namespace SaveLoad
         private void SendNewHighscoreToWebPage(Database.Score.LevelData levelData)
         {
             var data = new JSONScoreData(levelsData.ChoosedLevel, levelData.GreenTeamScore, levelData.RedTeamScore);
-
             var convertedData = JsonUtility.ToJson(data);
 
-            WebCommunication.WebBridge.SendValue(NEW_HIGHSCORE, convertedData);
+            WebCommunication.WebBridge.Instance.Send(NEW_HIGHSCORE, convertedData);
+
+            SetScoreAsSaved(true);
+        }
+
+        private void SetScoreAsSaved(bool succeed)
+        {
+            m_scoreSaved = true;
+            OnScoreSaved?.Invoke(succeed);
         }
 
         private class JSONScoreData

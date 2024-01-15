@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 using Database.Score;
+using SaveLoad;
 
 namespace MainMenu.Options
 {
@@ -25,7 +26,17 @@ namespace MainMenu.Options
         [SerializeField]
         private Color ClosedColorBG;
 
-        void Start()
+        private void OnEnable()
+        {
+            scoreData.OnScoreDataChanged += OnScoreDataChanged;
+        }
+
+        private void OnScoreDataChanged()
+        {
+            UpdateLevelButtons();
+        }
+
+        private void UpdateLevelButtons()
         {
             for (int i = 0; i < LevelButtonsBGs.Length; i++)
             {
@@ -33,7 +44,7 @@ namespace MainMenu.Options
                     LevelButtonsBGs[i].color = OpenedColorBG;
                 else
                 {
-                    LevelData previoslevelData = scoreData.GetLevelData(i - 1);
+                    LevelData previoslevelData = scoreData.LevelDataAt(i - 1);
                     if (previoslevelData.isPlayed && previoslevelData.GreenTeamScore > previoslevelData.RedTeamScore)
                     {
                         LevelButtonsBGs[i].color = OpenedColorBG;
@@ -46,19 +57,19 @@ namespace MainMenu.Options
             }
         }
 
-        void Update()
-        {
-
-        }
-
         public void SelectLevelDifficulty(int level)
         {
-            if (level == 0 || scoreData.GetLevelData(level - 1).isPlayed &&
-                scoreData.GetLevelData(level - 1).GreenTeamScore > scoreData.GetLevelData(level - 1).RedTeamScore)
+            if (level == 0 || scoreData.LevelDataAt(level - 1).isPlayed &&
+                scoreData.LevelDataAt(level - 1).GreenTeamScore > scoreData.LevelDataAt(level - 1).RedTeamScore)
             {
                 levelsData.ChoosedLevel = level;
                 SceneManager.LoadScene("Game");
             }
+        }
+
+        private void OnDisable()
+        {
+            scoreData.OnScoreDataChanged -= OnScoreDataChanged;
         }
     }
 }

@@ -11,21 +11,22 @@ namespace WebCommunication
         public const string PLAYERNAME_KEY = "playername";
 
         [SerializeField]
-        private GameSocket m_socket;
-
-        [SerializeField]
         private PlayerSessionData m_sessionData;
 
-        private void Awake()
+        [SerializeField]
+        private bool m_debug;
+
+        private void Start()
         {
             GetPlayerName();
         }
 
         private void GetPlayerName()
         {
-            m_sessionData.Name = WebBridge.GetValue(PLAYERNAME_KEY);
+            m_sessionData.Name = WebBridge.Instance.Request(PLAYERNAME_KEY);
             m_sessionData.SetAsConnected();
-            WebBridge.ShowMessageBox("If you see this, that means plugin is working!");
+            if (m_debug)
+                WebBridge.Instance.ShowMessage("If you see this, that means plugin is working!");
         }
     }
 }
