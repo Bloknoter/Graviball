@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelDatas:
   - redTeamScore: 0
-    greenTeamScore: 0
-  - redTeamScore: 0
-    greenTeamScore: 0
-  - redTeamScore: 0
-    greenTeamScore: 0
+    greenTeamScore: 1
+  - redTeamScore: 1
+    greenTeamScore: 2
+  - redTeamScore: 2
+    greenTeamScore: 3

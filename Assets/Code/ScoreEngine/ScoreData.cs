@@ -8,69 +8,27 @@ namespace Database.Score
     [CreateAssetMenu(fileName = "ScoreData", menuName = "Score data", order = 1)]
     public class ScoreData : ScriptableObject
     {
-        public delegate void ScoreDataListener();
-        public event ScoreDataListener OnScoreDataChanged;
+        public delegate void HighscoreDataListener();
+        public event HighscoreDataListener OnHighscoreDataChanged;
 
         [SerializeField]
-        private LevelData[] levelDatas;
+        private int m_highscore;
 
-        public int LevelsCount => levelDatas.Length;
-
-        public LevelData LevelDataAt(int index)
+        public int Highscore
         {
-            if(index >= 0 && index < levelDatas.Length)
+            get => m_highscore;
+            set
             {
-                return levelDatas[index];
-            }
-            else
-            {
-                throw new System.Exception($"You are trying to GetLevelData with index {index}, but the whole amount of datas is {levelDatas.Length}");
+                var prev = m_highscore;
+                m_highscore = value;
+                if (prev != m_highscore)
+                    OnHighscoreDataChanged?.Invoke();
             }
         }
 
         public void CallScoreDataChangedEvent()
         {
-            OnScoreDataChanged?.Invoke();
+            OnHighscoreDataChanged?.Invoke();
         }
-    }
-
-    [System.Serializable]
-    public class LevelData
-    {
-        [SerializeField]
-        private int redTeamScore = 0;
-        public int RedTeamScore
-        {
-            get { return redTeamScore; }
-            set
-            {
-                if (value >= 0)
-                    redTeamScore = value;
-            }
-        }
-        [SerializeField]
-        private int greenTeamScore = 0;
-        public int GreenTeamScore
-        {
-            get { return greenTeamScore; }
-            set
-            {
-                if (value >= 0)
-                    greenTeamScore = value;
-            }
-        }
-
-        private bool isplayed;
-
-        public bool isPlayed
-        {
-            get { return isplayed; }
-            set
-            {
-                if (!isplayed)
-                    isplayed = value;
-            }
-        }
-
     }
 }

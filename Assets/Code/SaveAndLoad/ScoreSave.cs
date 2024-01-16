@@ -47,27 +47,20 @@ namespace SaveLoad
 
         private void OnTimeRunOut()
         {
-            Database.Score.LevelData levelData = scoreData.LevelDataAt(levelsData.ChoosedLevel);
-            if (levelData.isPlayed == false || 
-                levelData.GreenTeamScore - levelData.RedTeamScore < scoreCounter.GreenTeamScore - scoreCounter.RedTeamScore)
+            int totalScore = scoreCounter.CalculatePlayerScore();
+            if (scoreData.Highscore < totalScore)
             {
-                levelData.RedTeamScore = scoreCounter.RedTeamScore;
-                levelData.GreenTeamScore = scoreCounter.GreenTeamScore;
-                levelData.isPlayed = true;
-                scoreData.CallScoreDataChangedEvent();
+                scoreData.Highscore = totalScore;
 
-                SendNewHighscoreToWebPage(levelData);
+                SendNewHighscoreToWebPage(scoreData.Highscore);
 
                 OnNewHighScore?.Invoke();
             }
         }
 
-        private void SendNewHighscoreToWebPage(Database.Score.LevelData levelData)
+        private void SendNewHighscoreToWebPage(int score)
         {
-            var data = new JSONScoreData(levelsData.ChoosedLevel, levelData.GreenTeamScore, levelData.RedTeamScore);
-            var convertedData = JsonUtility.ToJson(data);
-
-            WebCommunication.WebBridge.Instance.Send(NEW_HIGHSCORE, convertedData);
+            WebCommunication.WebBridge.Instance.Send(NEW_HIGHSCORE, score.ToString());
 
             SetScoreAsSaved(true);
         }
@@ -76,20 +69,6 @@ namespace SaveLoad
         {
             m_scoreSaved = true;
             OnScoreSaved?.Invoke(succeed);
-        }
-
-        private class JSONScoreData
-        {
-            public int level;
-            public int greenScore;
-            public int redScore;
-
-            public JSONScoreData(int level, int greensScore, int redScore)
-            {
-                this.level = level;
-                this.greenScore = greensScore;
-                this.redScore = redScore;
-            }
         }
     }
 }

@@ -28,54 +28,10 @@ namespace SaveLoad
 
         private void FetchScore()
         {
-            var dataAsJson = WebBridge.Instance.Request(PLAYER_SCORE_DATA);
-            FillScoreFromJson(dataAsJson);
+            var dataAsString = WebBridge.Instance.Request(PLAYER_SCORE_DATA);
 
-            scoreData.CallScoreDataChangedEvent();
-        }
-
-        private void FillScoreFromJson(string json)
-        {
-            var fetchedData = JsonUtility.FromJson<FetchedScoreData>(json);
-
-            for(int i = 0; i < scoreData.LevelsCount; ++i) 
-            {
-                var levelData = scoreData.LevelDataAt(i);
-                if (i < fetchedData.levels.Count)
-                {
-                    levelData.isPlayed = true;
-                    levelData.GreenTeamScore = fetchedData.levels[i].greenScore;
-                    levelData.RedTeamScore = fetchedData.levels[i].redScore;
-                }
-                else
-                {
-                    levelData.isPlayed = false;
-                }
-            }
-        }
-
-        [System.Serializable]
-        private class FetchedScoreData
-        {
-            [System.Serializable]
-            public class LevelData
-            {
-                public int greenScore;
-                public int redScore;
-
-                public LevelData(int greenScore, int redScore)
-                {
-                    this.greenScore = greenScore;
-                    this.redScore = redScore;
-                }
-            }
-
-            public List<LevelData> levels;
-
-            public FetchedScoreData(List<LevelData> levels)
-            {
-                this.levels = levels;
-            }
+            if (int.TryParse(dataAsString, out int result))
+                scoreData.Highscore = result;
         }
     }
 }
