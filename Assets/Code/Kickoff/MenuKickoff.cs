@@ -35,16 +35,11 @@ namespace MainMenu
         private ScoreCounter scoreCounter;
 
 
-        void Start()
+        private void Start()
         {
             scoreCounter.OnScoreofRedTeamChangedEvent += OnScoreChanged;
             scoreCounter.OnScoreofGreenTeamChangedEvent += OnScoreChanged;
             StartKickoff();
-        }
-
-        void Update()
-        {
-
         }
 
         private void StartKickoff()
@@ -94,6 +89,12 @@ namespace MainMenu
         {
             yield return new WaitForSecondsRealtime(1f);
             StartKickoff();
+        }
+
+        private void OnDisable()
+        {
+            scoreCounter.OnScoreofRedTeamChangedEvent -= OnScoreChanged;
+            scoreCounter.OnScoreofGreenTeamChangedEvent -= OnScoreChanged;
         }
     }
 

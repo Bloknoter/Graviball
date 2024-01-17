@@ -59,7 +59,9 @@ namespace GameEngine
         [SerializeField]
         private Animator countdownAnimator;
 
-        void Start()
+        private bool wasStart;
+
+        private void Start()
         {
             Time.timeScale = 1;
             CountdownT.gameObject.SetActive(false);
@@ -69,8 +71,7 @@ namespace GameEngine
             ball.Deactivate();
         }
 
-        private bool wasStart;
-        void Update()
+        private void Update()
         {
             if(!wasStart)
             {
@@ -156,6 +157,12 @@ namespace GameEngine
         {
             yield return new WaitForSecondsRealtime(3f);
             StartKickoff();
+        }
+
+        private void OnDisable()
+        {
+            scoreCounter.OnScoreofRedTeamChangedEvent -= OnScoreChanged;
+            scoreCounter.OnScoreofGreenTeamChangedEvent -= OnScoreChanged;
         }
     }
 

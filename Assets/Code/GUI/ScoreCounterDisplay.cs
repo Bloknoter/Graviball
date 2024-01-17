@@ -49,5 +49,12 @@ namespace GameGUI.GameEngine
         {
             PlayerScoreT.text = newscore.ToString();
         }
+
+        private void OnDisable()
+        {
+            scoreCounter.OnScoreofRedTeamChangedEvent -= OnRedTeamScoreChanged;
+            scoreCounter.OnScoreofGreenTeamChangedEvent -= OnGreenTeamScoreChanged;
+            scoreCounter.OnPlayerPointsChanged -= OnPlayerScoreChanged;
+        }
     }
 }

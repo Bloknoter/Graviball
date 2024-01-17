@@ -35,14 +35,8 @@ namespace Player
 
         public GravityModeEnum GravityMode { get; private set; } = GravityModeEnum.Down;
 
-        void Start()
+        private void Update()
         {
-
-        }
-
-        void Update()
-        {
-            //Debug.Log($"{CurrentState}");
             myrenderer.flipX = movement.LookingDirection == Movement.LookingDirectionEnum.Right;
         }
 

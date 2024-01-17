@@ -34,6 +34,11 @@ namespace InputEngine
             OnButtonDown += callback;
 
         }
+        public void RemoveKeyDownListener(OnButtonCallback callback)
+        {
+            OnButtonDown -= callback;
+
+        }
 
 
         private event OnButtonCallback OnButtonHold;
@@ -45,6 +50,10 @@ namespace InputEngine
         {
             OnButtonHold += callback;
         }
+        public void RemoveKeyHoldListener(OnButtonCallback callback)
+        {
+            OnButtonHold -= callback;
+        }
 
 
         private event OnButtonCallback OnButtonUp;
@@ -55,6 +64,10 @@ namespace InputEngine
         public void AddKeyUpListener(OnButtonCallback callback)
         {
             OnButtonUp += callback;
+        }
+        public void RemoveKeyUpListener(OnButtonCallback callback)
+        {
+            OnButtonUp -= callback;
         }
 
         public abstract void CheckInput();

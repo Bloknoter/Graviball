@@ -28,6 +28,12 @@ namespace GameGUI
         {
             m_savingInformationPanel.SetActive(false);
             m_controlsPanel.SetActive(true);
+            m_scoreSave.OnScoreSaved -= OnScoreSaved;
+        }
+
+        private void OnDisable()
+        {
+            m_scoreSave.OnScoreSaved -= OnScoreSaved;
         }
     }
 }

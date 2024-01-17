@@ -15,7 +15,7 @@ namespace GameGUI
         [SerializeField]
         private TextMeshProUGUI m_scoreText;
 
-        private void Start()
+        private void OnEnable()
         {
             m_scoreData.OnHighscoreDataChanged += OnScoreChanged;
             m_scoreText.text = m_scoreData.Highscore.ToString();
@@ -24,6 +24,11 @@ namespace GameGUI
         private void OnScoreChanged()
         {
             m_scoreText.text = m_scoreData.Highscore.ToString();
+        }
+
+        private void OnDisable()
+        {
+            m_scoreData.OnHighscoreDataChanged -= OnScoreChanged;
         }
     }
 }

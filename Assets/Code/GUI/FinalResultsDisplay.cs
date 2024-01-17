@@ -15,7 +15,7 @@ namespace GameGUI.GameEngine
         [SerializeField]
         private GameObject HighScore;
 
-        void Start()
+        private void OnEnable()
         {
             HighScore.SetActive(false);
             scoreSave.OnNewHighScore += OnNewHighScore;
@@ -24,6 +24,11 @@ namespace GameGUI.GameEngine
         private void OnNewHighScore()
         {
             HighScore.SetActive(true);
+        }
+
+        private void OnDisable()
+        {
+            scoreSave.OnNewHighScore -= OnNewHighScore;
         }
     }
 }

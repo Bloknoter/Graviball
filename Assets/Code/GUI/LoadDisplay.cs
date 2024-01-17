@@ -30,5 +30,10 @@ namespace GameGUI
 
             m_menuController.SetPage(m_nextPageAfterLoaded);
         }
+
+        private void OnDisable()
+        {
+            m_session.OnConnected -= OnConnected;
+        }
     }
 }

@@ -56,6 +56,8 @@ namespace SaveLoad
 
                 OnNewHighScore?.Invoke();
             }
+            else
+                SetScoreAsSaved(true);
         }
 
         private void SendNewHighscoreToWebPage(int score)
@@ -69,6 +71,11 @@ namespace SaveLoad
         {
             m_scoreSaved = true;
             OnScoreSaved?.Invoke(succeed);
+        }
+
+        private void OnDisable()
+        {
+            timer.OnTimeRunOut -= OnTimeRunOut;
         }
     }
 }

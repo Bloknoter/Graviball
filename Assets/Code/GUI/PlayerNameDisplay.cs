@@ -46,7 +46,13 @@ namespace GameGUI
 
         private void OnConnected()
         {
+            m_sessionData.OnConnected -= OnConnected;
             ShowName(m_sessionData.Connected);
+        }
+
+        private void OnDisable()
+        {
+            m_sessionData.OnConnected -= OnConnected;
         }
     }
 }
