@@ -1,4 +1,3 @@
-using Database.AI;
 using GameEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,9 +6,6 @@ using UnityEngine;
 
 public class GoalsPlayerPointsModifier : MonoBehaviour
 {
-    [SerializeField]
-    private BotLevelsData m_levelData;
-
     [SerializeField]
     private ScoreCounter m_scoreCounter;
 
@@ -27,11 +23,11 @@ public class GoalsPlayerPointsModifier : MonoBehaviour
 
     private void OnGreenTeamScoreChanged(int greenScore)
     {
-        m_scoreCounter.AddPlayerPoints(m_pointsForGoal * (m_levelData.ChoosedLevel + 1));
+        m_scoreCounter.AddPlayerPoints(m_pointsForGoal);
     }
 
     private void OnRedTeamScoreChanged(int greenScore)
     {
-        m_scoreCounter.AddPlayerPoints(m_pointsForMissed * (m_levelData.ChoosedLevel + 1));
+        m_scoreCounter.AddPlayerPoints(m_pointsForMissed);
     }
 }
